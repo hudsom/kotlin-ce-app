@@ -1,0 +1,27 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.Kotlinceapp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaria</item>
+        <item name="colorPrimaryDark">@color/primaria_escura</item>
+        <item name="colorOnPrimary">@color/sobre_primaria</item>
+        <item name="colorSecondary">@color/secundaria</item>
+        <item name="colorOnSecondary">@color/sobre_secundaria</item>
+        <item name="android:colorBackground">@color/fundo</item>
+        <item name="colorSurface">@color/superficie</item>
+        <item name="colorOnSurface">@color/sobre_superficie</item>
+        <item name="colorError">@color/erro</item>
+        <item name="colorOnError">@color/sobre_erro</item>
+        <item name="android:statusBarColor">@color/primaria_escura</item>
+    </style>
+
+    <style name="Theme.Kotlinceapp" parent="Base.Theme.Kotlinceapp" />
+
+    <style name="TituloToolbar" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="BotaoRedondo" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>

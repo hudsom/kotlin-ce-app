@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primária -->
+    <color name="primaria">#FF90CAF9</color>
+    <color name="primaria_escura">#FF1565C0</color>
+    <color name="primaria_clara">#FFBBDEFB</color>
+    <color name="sobre_primaria">#FF000000</color>
+
+    <!-- Secundária -->
+    <color name="secundaria">#FF80CBC4</color>
+    <color name="sobre_secundaria">#FF000000</color>
+
+    <!-- Fundo -->
+    <color name="fundo">#FF121212</color>
+    <color name="superficie">#FF1E1E1E</color>
+    <color name="sobre_fundo">#FFFAFAFA</color>
+    <color name="sobre_superficie">#FFFAFAFA</color>
+
+    <!-- Erro -->
+    <color name="erro">#FFEF5350</color>
+    <color name="sobre_erro">#FF000000</color>
+
+    <color name="texto_dica">#FF757575</color>
+    <color name="divisor">#FF424242</color>
+    <color name="fundo_cartao">#FF1E1E1E</color>
+    <color name="texto_link">#FF90CAF9</color>
+</resources>

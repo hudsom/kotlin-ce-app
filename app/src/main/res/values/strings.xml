@@ -1,0 +1,62 @@
+<resources>
+    <string name="nome_app">Kotlin CE App</string>
+
+    <!-- Login -->
+    <string name="login_titulo">Entrar</string>
+    <string name="login_subtitulo">Acesse sua conta para continuar</string>
+    <string name="login_email_dica">E-mail</string>
+    <string name="login_senha_dica">Senha</string>
+    <string name="login_botao">Entrar</string>
+    <string name="login_link_cadastro">Não tem conta? Cadastre-se</string>
+    <string name="login_lembrar">Lembrar usuário</string>
+    <string name="login_google">Entrar com Google</string>
+    <string name="cadastro_google">Cadastrar com Google</string>
+
+    <!-- Cadastro do usuário -->
+    <string name="cadastro_titulo">Criar Conta</string>
+    <string name="cadastro_subtitulo">Preencha os dados para se cadastrar</string>
+    <string name="cadastro_nome_dica">Nome completo</string>
+    <string name="cadastro_email_dica">E-mail</string>
+    <string name="cadastro_senha_dica">Senha</string>
+    <string name="cadastro_botao">Cadastrar</string>
+    <string name="cadastro_link_login">Já tem conta? Entrar</string>
+
+    <!-- Tela Inicial -->
+    <string name="inicial_titulo">Comunidades</string>
+    <string name="inicial_nova_comunidade">Nova Comunidade</string>
+    <string name="inicial_sair">Sair</string>
+    <string name="inicial_vazio">Nenhuma comunidade cadastrada.\nToque no botão + para criar uma nova comunidade.</string>
+
+    <!-- Cadastro de Comunidades -->
+    <string name="comunidade_titulo_nova">Nova Comunidade</string>
+    <string name="comunidade_titulo_editar">Editar Comunidade</string>
+    <string name="comunidade_nome_dica">Nome da comunidade</string>
+    <string name="comunidade_lider_dica">Líder da comunidade</string>
+    <string name="comunidade_descricao_dica">Descrição</string>
+    <string name="comunidade_salvar">Salvar</string>
+    <string name="comunidade_excluir">Excluir</string>
+
+    <!-- Mensagens -->
+    <string name="dialogo_excluir_titulo">Excluir comunidade</string>
+    <string name="dialogo_excluir_mensagem">Tem certeza que deseja excluir a comunidade?</string>
+    <string name="dialogo_sair_titulo">Sair da conta</string>
+    <string name="dialogo_sair_mensagem">Tem certeza que deseja sair?</string>
+    <string name="dialogo_confirmar">Confirmar</string>
+    <string name="dialogo_cancelar">Cancelar</string>
+
+    <string name="erro_campos_vazios">Preencha todos os campos.</string>
+    <string name="erro_nome_obrigatorio">Informe o nome.</string>
+    <string name="erro_email_obrigatorio">Informe o e-mail.</string>
+    <string name="erro_email_invalido">E-mail inválido.</string>
+    <string name="erro_senha_obrigatoria">Informe a senha.</string>
+    <string name="erro_senha_curta">A senha deve ter no mínimo 6 caracteres.</string>
+    <string name="erro_nome_curto">O nome deve ter no mínimo 3 caracteres.</string>
+
+    <string name="erro_login_falhou">E-mail ou senha inválidas.</string>
+    <string name="erro_email_ja_cadastrado">E-mail já cadastrado.</string>
+    <string name="erro_conexao">Erro de conexão. Favor verificar sua internet.</string>
+
+    <string name="sucesso_cadastro">Conta criada com sucesso!</string>
+    <string name="sucesso_comunidade_salva">Comunidade salva!</string>
+    <string name="sucesso_comunidade_excluida">Comunidade excluída!</string>
+</resources>

@@ -1,0 +1,25 @@
+# Gradle
+.gradle
+/build
+local.properties
+
+# Android Studio
+*.iml
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# Build
+.externalNativeBuild
+.cxx
+/captures
+
+# macOS
+.DS_Store
+
+# Keys
+secrets.properties
+app/google-services.json
