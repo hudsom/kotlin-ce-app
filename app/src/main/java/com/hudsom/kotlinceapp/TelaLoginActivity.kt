@@ -21,6 +21,9 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 import com.hudsom.kotlinceapp.databinding.TelaLoginBinding
+import com.hudsom.kotlinceapp.fragment.BotaoFragment
+import com.hudsom.kotlinceapp.fragment.InputEmailFragment
+import com.hudsom.kotlinceapp.fragment.InputSenhaFragment
 import com.hudsom.kotlinceapp.model.PerfilUsuario
 import kotlinx.coroutines.launch
 
@@ -29,6 +32,10 @@ class TelaLoginActivity : AppCompatActivity() {
     private lateinit var binding: TelaLoginBinding
     private lateinit var autenticacao: FirebaseAuth
     private val prefs by lazy { getSharedPreferences("login_prefs", MODE_PRIVATE) }
+
+    private lateinit var fragmentEmail: InputEmailFragment
+    private lateinit var fragmentSenha: InputSenhaFragment
+    private lateinit var fragmentBtnEntrar: BotaoFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +50,15 @@ class TelaLoginActivity : AppCompatActivity() {
 
         autenticacao = FirebaseAuth.getInstance()
 
+        fragmentEmail = supportFragmentManager.findFragmentById(R.id.fragmentEmail) as InputEmailFragment
+        fragmentSenha = supportFragmentManager.findFragmentById(R.id.fragmentSenha) as InputSenhaFragment
+        fragmentBtnEntrar = supportFragmentManager.findFragmentById(R.id.fragmentBtnEntrar) as BotaoFragment
+
+        fragmentBtnEntrar.definirTexto(getString(R.string.login_botao))
+        fragmentBtnEntrar.definirClique { realizarLogin() }
+
         carregarCredenciais()
 
-        binding.btnEntrar.setOnClickListener { realizarLogin() }
         binding.btnGoogle.setOnClickListener { loginComGoogle() }
         binding.btnIrCadastro.setOnClickListener {
             startActivity(Intent(this, TelaCadastroActivity::class.java))
@@ -54,8 +67,8 @@ class TelaLoginActivity : AppCompatActivity() {
 
     private fun carregarCredenciais() {
         if (prefs.getBoolean("lembrar", false)) {
-            binding.etEmail.setText(prefs.getString("email", ""))
-            binding.etSenha.setText(prefs.getString("senha", ""))
+            fragmentEmail.definirTexto(prefs.getString("email", "") ?: "")
+            fragmentSenha.definirTexto(prefs.getString("senha", "") ?: "")
             binding.cbLembrar.isChecked = true
         }
     }
@@ -73,8 +86,8 @@ class TelaLoginActivity : AppCompatActivity() {
     }
 
     private fun limparErros() {
-        binding.tilEmail.error = null
-        binding.tilSenha.error = null
+        fragmentEmail.limparErro()
+        fragmentSenha.limparErro()
     }
 
     private fun validarCampos(email: String, senha: String): Boolean {
@@ -82,18 +95,18 @@ class TelaLoginActivity : AppCompatActivity() {
         var valido = true
 
         if (email.isEmpty()) {
-            binding.tilEmail.error = getString(R.string.erro_email_obrigatorio)
+            fragmentEmail.definirErro(getString(R.string.erro_email_obrigatorio))
             valido = false
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tilEmail.error = getString(R.string.erro_email_invalido)
+            fragmentEmail.definirErro(getString(R.string.erro_email_invalido))
             valido = false
         }
 
         if (senha.isEmpty()) {
-            binding.tilSenha.error = getString(R.string.erro_senha_obrigatoria)
+            fragmentSenha.definirErro(getString(R.string.erro_senha_obrigatoria))
             valido = false
         } else if (senha.length < 6) {
-            binding.tilSenha.error = getString(R.string.erro_senha_curta)
+            fragmentSenha.definirErro(getString(R.string.erro_senha_curta))
             valido = false
         }
 
@@ -101,8 +114,8 @@ class TelaLoginActivity : AppCompatActivity() {
     }
 
     private fun realizarLogin() {
-        val email = binding.etEmail.text.toString().trim()
-        val senha = binding.etSenha.text.toString().trim()
+        val email = fragmentEmail.obterTexto()
+        val senha = fragmentSenha.obterTexto()
 
         if (!validarCampos(email, senha)) return
 
@@ -119,11 +132,11 @@ class TelaLoginActivity : AppCompatActivity() {
                 limparErros()
                 when (erro) {
                     is FirebaseAuthInvalidUserException ->
-                        binding.tilEmail.error = getString(R.string.erro_login_falhou)
+                        fragmentEmail.definirErro(getString(R.string.erro_login_falhou))
                     is FirebaseAuthInvalidCredentialsException ->
-                        binding.tilSenha.error = getString(R.string.erro_login_falhou)
+                        fragmentSenha.definirErro(getString(R.string.erro_login_falhou))
                     else ->
-                        binding.tilEmail.error = getString(R.string.erro_conexao)
+                        fragmentEmail.definirErro(getString(R.string.erro_conexao))
                 }
             }
     }

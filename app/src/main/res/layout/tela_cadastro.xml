@@ -54,44 +54,25 @@
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilEmail"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentEmail"
+            android:name="com.hudsom.kotlinceapp.fragment.InputEmailFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            app:startIconDrawable="@android:drawable/sym_action_email">
+            android:layout_marginBottom="16dp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/cadastro_email_dica"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilSenha"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentSenha"
+            android:name="com.hudsom.kotlinceapp.fragment.InputSenhaFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            app:endIconMode="password_toggle">
+            android:layout_marginBottom="24dp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSenha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/cadastro_senha_dica"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCadastrar"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentBtnCadastrar"
+            android:name="com.hudsom.kotlinceapp.fragment.BotaoFragment"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="@string/cadastro_botao"
-            android:textSize="16sp" />
+            android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"

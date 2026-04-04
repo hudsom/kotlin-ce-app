@@ -2,7 +2,6 @@ package com.hudsom.kotlinceapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -11,22 +10,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.hudsom.kotlinceapp.adapter.ComunidadeAdapter
-import com.hudsom.kotlinceapp.dados.BancoLocal
 import com.hudsom.kotlinceapp.databinding.TelaInicialBinding
-import com.hudsom.kotlinceapp.model.Comunidade
 
 class TelaInicialActivity : AppCompatActivity() {
 
     private lateinit var binding: TelaInicialBinding
     private lateinit var autenticacao: FirebaseAuth
     private lateinit var bancoDados: DatabaseReference
-    private lateinit var adaptador: ComunidadeAdapter
-    private lateinit var dao: com.hudsom.kotlinceapp.dados.ComunidadeDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,12 +34,8 @@ class TelaInicialActivity : AppCompatActivity() {
 
         autenticacao = FirebaseAuth.getInstance()
         bancoDados = FirebaseDatabase.getInstance(BuildConfig.FIREBASE_DATABASE_URL).reference
-        dao = BancoLocal.obterInstancia(this).comunidadeDao()
 
         configurarDrawer()
-        configurarListaComunidades()
-        carregarLocal()
-        sincronizarComFirebase()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -58,16 +47,6 @@ class TelaInicialActivity : AppCompatActivity() {
                 }
             }
         })
-
-        binding.fabAdicionar.setOnClickListener {
-            startActivity(Intent(this, TelaComunidadeActivity::class.java))
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        carregarLocal()
-        sincronizarComFirebase()
     }
 
     private fun configurarDrawer() {
@@ -110,45 +89,6 @@ class TelaInicialActivity : AppCompatActivity() {
                 else -> false
             }
         }
-    }
-
-    private fun configurarListaComunidades() {
-        adaptador = ComunidadeAdapter(
-            aoClicar = { comunidade ->
-                val intent = Intent(this, TelaComunidadeActivity::class.java)
-                intent.putExtra("comunidade_id", comunidade.id)
-                startActivity(intent)
-            }
-        )
-        binding.rvComunidades.layoutManager = LinearLayoutManager(this)
-        binding.rvComunidades.adapter = adaptador
-    }
-
-    private fun carregarLocal() {
-        Thread {
-            val lista = dao.listarTodas()
-            runOnUiThread { atualizarUI(lista) }
-        }.start()
-    }
-
-    private fun sincronizarComFirebase() {
-        bancoDados.child("comunidades")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val lista = snapshot.children.mapNotNull { it.getValue(Comunidade::class.java) }
-                    Thread {
-                        dao.limparTodas()
-                        dao.salvarTodas(lista)
-                        runOnUiThread { atualizarUI(lista) }
-                    }.start()
-                }
-                override fun onCancelled(error: DatabaseError) {}
-            })
-    }
-
-    private fun atualizarUI(lista: List<Comunidade>) {
-        adaptador.atualizarLista(lista)
-        binding.tvVazio.visibility = if (lista.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun confirmarSaida() {

@@ -22,6 +22,9 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
 import com.hudsom.kotlinceapp.databinding.TelaCadastroBinding
+import com.hudsom.kotlinceapp.fragment.BotaoFragment
+import com.hudsom.kotlinceapp.fragment.InputEmailFragment
+import com.hudsom.kotlinceapp.fragment.InputSenhaFragment
 import com.hudsom.kotlinceapp.model.PerfilUsuario
 import kotlinx.coroutines.launch
 
@@ -29,6 +32,10 @@ class TelaCadastroActivity : AppCompatActivity() {
 
     private lateinit var binding: TelaCadastroBinding
     private lateinit var autenticacao: FirebaseAuth
+
+    private lateinit var fragmentEmail: InputEmailFragment
+    private lateinit var fragmentSenha: InputSenhaFragment
+    private lateinit var fragmentBtnCadastrar: BotaoFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +50,13 @@ class TelaCadastroActivity : AppCompatActivity() {
 
         autenticacao = FirebaseAuth.getInstance()
 
-        binding.btnCadastrar.setOnClickListener { realizarCadastro() }
+        fragmentEmail = supportFragmentManager.findFragmentById(R.id.fragmentEmail) as InputEmailFragment
+        fragmentSenha = supportFragmentManager.findFragmentById(R.id.fragmentSenha) as InputSenhaFragment
+        fragmentBtnCadastrar = supportFragmentManager.findFragmentById(R.id.fragmentBtnCadastrar) as BotaoFragment
+
+        fragmentBtnCadastrar.definirTexto(getString(R.string.cadastro_botao))
+        fragmentBtnCadastrar.definirClique { realizarCadastro() }
+
         binding.btnGoogle.setOnClickListener { cadastrarComGoogle() }
         binding.btnIrLogin.setOnClickListener {
             startActivity(Intent(this, TelaLoginActivity::class.java))
@@ -53,8 +66,8 @@ class TelaCadastroActivity : AppCompatActivity() {
 
     private fun limparErros() {
         binding.tilNome.error = null
-        binding.tilEmail.error = null
-        binding.tilSenha.error = null
+        fragmentEmail.limparErro()
+        fragmentSenha.limparErro()
     }
 
     private fun validarCampos(nome: String, email: String, senha: String): Boolean {
@@ -70,18 +83,18 @@ class TelaCadastroActivity : AppCompatActivity() {
         }
 
         if (email.isEmpty()) {
-            binding.tilEmail.error = getString(R.string.erro_email_obrigatorio)
+            fragmentEmail.definirErro(getString(R.string.erro_email_obrigatorio))
             valido = false
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tilEmail.error = getString(R.string.erro_email_invalido)
+            fragmentEmail.definirErro(getString(R.string.erro_email_invalido))
             valido = false
         }
 
         if (senha.isEmpty()) {
-            binding.tilSenha.error = getString(R.string.erro_senha_obrigatoria)
+            fragmentSenha.definirErro(getString(R.string.erro_senha_obrigatoria))
             valido = false
         } else if (senha.length < 6) {
-            binding.tilSenha.error = getString(R.string.erro_senha_curta)
+            fragmentSenha.definirErro(getString(R.string.erro_senha_curta))
             valido = false
         }
 
@@ -90,8 +103,8 @@ class TelaCadastroActivity : AppCompatActivity() {
 
     private fun realizarCadastro() {
         val nome = binding.etNome.text.toString().trim()
-        val email = binding.etEmail.text.toString().trim()
-        val senha = binding.etSenha.text.toString().trim()
+        val email = fragmentEmail.obterTexto()
+        val senha = fragmentSenha.obterTexto()
 
         if (!validarCampos(nome, email, senha)) return
 
@@ -112,13 +125,13 @@ class TelaCadastroActivity : AppCompatActivity() {
                 limparErros()
                 when (erro) {
                     is FirebaseAuthUserCollisionException ->
-                        binding.tilEmail.error = getString(R.string.erro_email_ja_cadastrado)
+                        fragmentEmail.definirErro(getString(R.string.erro_email_ja_cadastrado))
                     is FirebaseAuthWeakPasswordException ->
-                        binding.tilSenha.error = getString(R.string.erro_senha_curta)
+                        fragmentSenha.definirErro(getString(R.string.erro_senha_curta))
                     is FirebaseAuthInvalidCredentialsException ->
-                        binding.tilEmail.error = getString(R.string.erro_email_invalido)
+                        fragmentEmail.definirErro(getString(R.string.erro_email_invalido))
                     else ->
-                        binding.tilEmail.error = getString(R.string.erro_conexao)
+                        fragmentEmail.definirErro(getString(R.string.erro_conexao))
                 }
             }
     }

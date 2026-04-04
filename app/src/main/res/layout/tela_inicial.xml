@@ -23,40 +23,12 @@
             app:titleTextAppearance="@style/TituloToolbar"
             app:titleTextColor="@color/sobre_primaria" />
 
-        <FrameLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentListaComunidades"
+            android:name="com.hudsom.kotlinceapp.fragment.ListaComunidadesFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" />
 
-            <TextView
-                android:id="@+id/tvVazio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/inicial_vazio"
-                android:textColor="@color/texto_dica"
-                android:textSize="16sp"
-                android:visibility="gone" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvComunidades"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:padding="4dp" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabAdicionar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="16dp"
-                android:contentDescription="@string/inicial_nova_comunidade"
-                android:src="@android:drawable/ic_input_add"
-                app:backgroundTint="@color/primaria"
-                app:shapeAppearanceOverlay="@style/BotaoRedondo"
-                app:tint="@color/sobre_primaria" />
-        </FrameLayout>
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView

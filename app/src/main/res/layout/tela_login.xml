@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/principal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -37,39 +38,19 @@
             android:textColor="@color/texto_dica"
             android:textSize="14sp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilEmail"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentEmail"
+            android:name="com.hudsom.kotlinceapp.fragment.InputEmailFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            app:startIconDrawable="@android:drawable/sym_action_email"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            android:layout_marginBottom="16dp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/login_email_dica"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilSenha"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentSenha"
+            android:name="com.hudsom.kotlinceapp.fragment.InputSenhaFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            app:endIconMode="password_toggle"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSenha"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/login_senha_dica"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginBottom="24dp" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/cbLembrar"
@@ -80,12 +61,11 @@
             android:textColor="@color/sobre_fundo"
             android:buttonTint="@color/primaria" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEntrar"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentBtnEntrar"
+            android:name="com.hudsom.kotlinceapp.fragment.BotaoFragment"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="@string/login_botao"
-            android:textSize="16sp" />
+            android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"
@@ -103,8 +83,7 @@
             app:icon="@drawable/icone_google"
             app:iconGravity="textStart"
             app:iconTint="@null"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            xmlns:app="http://schemas.android.com/apk/res-auto" />
+            style="@style/Widget.Material3.Button.OutlinedButton" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnIrCadastro"
