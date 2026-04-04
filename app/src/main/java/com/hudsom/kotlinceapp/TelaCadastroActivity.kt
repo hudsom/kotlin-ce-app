@@ -1,12 +1,19 @@
 package com.hudsom.kotlinceapp
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.util.Patterns
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.credentials.CredentialManager
@@ -15,6 +22,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
@@ -27,6 +35,8 @@ import com.hudsom.kotlinceapp.fragment.InputEmailFragment
 import com.hudsom.kotlinceapp.fragment.InputSenhaFragment
 import com.hudsom.kotlinceapp.model.PerfilUsuario
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 class TelaCadastroActivity : AppCompatActivity() {
 
@@ -36,6 +46,25 @@ class TelaCadastroActivity : AppCompatActivity() {
     private lateinit var fragmentEmail: InputEmailFragment
     private lateinit var fragmentSenha: InputSenhaFragment
     private lateinit var fragmentBtnCadastrar: BotaoFragment
+
+    private var fotoUri: Uri? = null
+    private var cameraUri: Uri? = null
+
+    private val selecionarGaleria = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            fotoUri = uri
+            binding.ivFotoCapa.setImageURI(uri)
+            binding.ivFotoCapa.scaleType = ImageView.ScaleType.CENTER_CROP
+        }
+    }
+
+    private val tirarFoto = registerForActivityResult(ActivityResultContracts.TakePicture()) { sucesso ->
+        if (sucesso && cameraUri != null) {
+            fotoUri = cameraUri
+            binding.ivFotoCapa.setImageURI(cameraUri)
+            binding.ivFotoCapa.scaleType = ImageView.ScaleType.CENTER_CROP
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,11 +86,48 @@ class TelaCadastroActivity : AppCompatActivity() {
         fragmentBtnCadastrar.definirTexto(getString(R.string.cadastro_botao))
         fragmentBtnCadastrar.definirClique { realizarCadastro() }
 
+        binding.btnSelecionarFoto.setOnClickListener { mostrarDialogoFoto() }
+        binding.ivFotoCapa.setOnClickListener { mostrarDialogoFoto() }
+
         binding.btnGoogle.setOnClickListener { cadastrarComGoogle() }
         binding.btnIrLogin.setOnClickListener {
             startActivity(Intent(this, TelaLoginActivity::class.java))
             finish()
         }
+    }
+
+    private fun mostrarDialogoFoto() {
+        val opcoes = arrayOf(
+            getString(R.string.cadastro_foto_camera),
+            getString(R.string.cadastro_foto_galeria)
+        )
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.cadastro_foto_titulo))
+            .setItems(opcoes) { _, qual ->
+                when (qual) {
+                    0 -> abrirCamera()
+                    1 -> selecionarGaleria.launch("image/*")
+                }
+            }
+            .show()
+    }
+
+    private fun abrirCamera() {
+        val dir = File(cacheDir, "fotos").apply { mkdirs() }
+        val arquivo = File(dir, "foto_${System.currentTimeMillis()}.jpg")
+        cameraUri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", arquivo)
+        tirarFoto.launch(cameraUri!!)
+    }
+
+    private fun converterImagemParaBase64(uri: Uri): String {
+        val source = ImageDecoder.createSource(contentResolver, uri)
+        val bitmap = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+            decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+        }
+        val redimensionado = Bitmap.createScaledBitmap(bitmap, 200, 200, true)
+        val stream = ByteArrayOutputStream()
+        redimensionado.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+        return Base64.encodeToString(stream.toByteArray(), Base64.NO_WRAP)
     }
 
     private fun limparErros() {
@@ -73,6 +139,11 @@ class TelaCadastroActivity : AppCompatActivity() {
     private fun validarCampos(nome: String, email: String, senha: String): Boolean {
         limparErros()
         var valido = true
+
+        if (fotoUri == null) {
+            Toast.makeText(this, getString(R.string.erro_foto_obrigatoria), Toast.LENGTH_SHORT).show()
+            valido = false
+        }
 
         if (nome.isEmpty()) {
             binding.tilNome.error = getString(R.string.erro_nome_obrigatorio)
@@ -108,13 +179,19 @@ class TelaCadastroActivity : AppCompatActivity() {
 
         if (!validarCampos(nome, email, senha)) return
 
+        val fotoBase64 = try {
+            converterImagemParaBase64(fotoUri!!)
+        } catch (e: Exception) {
+            Log.e("TelaCadastro", "Erro ao converter imagem", e)
+            ""
+        }
+
         autenticacao.createUserWithEmailAndPassword(email, senha)
             .addOnSuccessListener { resultado ->
                 val uid = resultado.user!!.uid
-                val perfil = PerfilUsuario(uid = uid, nome = nome, email = email)
+                val perfil = PerfilUsuario(uid = uid, nome = nome, email = email, fotoCapa = fotoBase64)
                 FirebaseDatabase.getInstance(BuildConfig.FIREBASE_DATABASE_URL).reference
-                    .child("usuarios").child(uid)
-                    .setValue(perfil)
+                    .child("usuarios").child(uid).setValue(perfil)
 
                 autenticacao.signOut()
                 Toast.makeText(this, getString(R.string.sucesso_cadastro), Toast.LENGTH_LONG).show()

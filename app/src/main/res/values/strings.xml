@@ -20,6 +20,12 @@
     <string name="cadastro_senha_dica">Senha</string>
     <string name="cadastro_botao">Cadastrar</string>
     <string name="cadastro_link_login">Já tem conta? Entrar</string>
+    <string name="cadastro_foto_dica">Foto de capa</string>
+    <string name="cadastro_selecionar_foto">Selecionar foto</string>
+    <string name="cadastro_foto_titulo">Foto de capa</string>
+    <string name="cadastro_foto_camera">Câmera</string>
+    <string name="cadastro_foto_galeria">Galeria</string>
+    <string name="erro_foto_obrigatoria">Selecione uma foto de capa.</string>
 
     <!-- Tela Inicial -->
     <string name="inicial_titulo">Comunidades</string>
@@ -35,6 +41,16 @@
     <string name="comunidade_descricao_dica">Descrição</string>
     <string name="comunidade_salvar">Salvar</string>
     <string name="comunidade_excluir">Excluir</string>
+    <string name="comunidade_obter_localizacao">Obter localização</string>
+    <string name="comunidade_localizacao">%1$s (%2$.4f, %3$.4f)</string>
+    <string name="comunidade_localizacao_simples">📍 %1$s</string>
+    <string name="comunidade_localizacao_vazia">Localização não obtida</string>
+    <string name="comunidade_selecionar_foto">Selecionar foto</string>
+    <string name="comunidade_foto_titulo">Foto da comunidade</string>
+    <string name="comunidade_foto_camera">Câmera</string>
+    <string name="comunidade_foto_galeria">Galeria</string>
+    <string name="erro_localizacao_permissao">Permissão de localização negada.</string>
+    <string name="erro_localizacao_falhou">Não foi possível obter a localização.</string>
 
     <!-- Mensagens -->
     <string name="dialogo_excluir_titulo">Excluir comunidade</string>

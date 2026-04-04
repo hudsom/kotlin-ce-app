@@ -11,21 +11,31 @@ import com.hudsom.kotlinceapp.R
 
 class InputEmailFragment : Fragment() {
 
-    private lateinit var tilEmail: TextInputLayout
-    private lateinit var etEmail: TextInputEditText
+    private var tilEmail: TextInputLayout? = null
+    private var etEmail: TextInputEditText? = null
+    private var textoPendente: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_input_email, container, false)
         tilEmail = view.findViewById(R.id.tilEmail)
         etEmail = view.findViewById(R.id.etEmail)
+        textoPendente?.let { etEmail?.setText(it); textoPendente = null }
         return view
     }
 
-    fun obterTexto(): String = etEmail.text.toString().trim()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        tilEmail = null
+        etEmail = null
+    }
 
-    fun definirTexto(texto: String) { etEmail.setText(texto) }
+    fun obterTexto(): String = etEmail?.text.toString().trim()
 
-    fun definirErro(mensagem: String?) { tilEmail.error = mensagem }
+    fun definirTexto(texto: String) {
+        if (etEmail != null) etEmail?.setText(texto) else textoPendente = texto
+    }
 
-    fun limparErro() { tilEmail.error = null }
+    fun definirErro(mensagem: String?) { tilEmail?.error = mensagem }
+
+    fun limparErro() { tilEmail?.error = null }
 }

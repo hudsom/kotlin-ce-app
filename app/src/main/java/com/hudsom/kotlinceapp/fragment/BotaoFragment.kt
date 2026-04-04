@@ -10,7 +10,8 @@ import com.hudsom.kotlinceapp.R
 
 class BotaoFragment : Fragment() {
 
-    private lateinit var botao: MaterialButton
+    private var botao: MaterialButton? = null
+    private var textoPendente: String? = null
     private var listener: (() -> Unit)? = null
 
     companion object {
@@ -26,17 +27,22 @@ class BotaoFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_botao, container, false)
         botao = view.findViewById(R.id.btnFragmento)
-        botao.text = arguments?.getString(ARG_TEXTO) ?: ""
-        botao.setOnClickListener { listener?.invoke() }
+        botao?.text = textoPendente ?: arguments?.getString(ARG_TEXTO) ?: ""
+        listener?.let { acao -> botao?.setOnClickListener { acao() } }
         return view
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        botao = null
+    }
+
     fun definirTexto(texto: String) {
-        if (::botao.isInitialized) botao.text = texto
+        if (botao != null) botao?.text = texto else textoPendente = texto
     }
 
     fun definirClique(acao: () -> Unit) {
         listener = acao
-        if (::botao.isInitialized) botao.setOnClickListener { acao() }
+        botao?.setOnClickListener { acao() }
     }
 }

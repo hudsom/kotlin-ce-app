@@ -68,6 +68,13 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
+    // Retrofit (API REST)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+
+    // Localização
+    implementation(libs.play.services.location)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

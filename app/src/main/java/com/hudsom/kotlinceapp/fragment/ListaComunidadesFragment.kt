@@ -2,22 +2,26 @@ package com.hudsom.kotlinceapp.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.database.*
-import com.hudsom.kotlinceapp.BuildConfig
 import com.hudsom.kotlinceapp.R
 import com.hudsom.kotlinceapp.TelaComunidadeActivity
 import com.hudsom.kotlinceapp.adapter.ComunidadeAdapter
+import com.hudsom.kotlinceapp.api.RetrofitClient
 import com.hudsom.kotlinceapp.dados.BancoLocal
 import com.hudsom.kotlinceapp.dados.ComunidadeDao
 import com.hudsom.kotlinceapp.model.Comunidade
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ListaComunidadesFragment : Fragment() {
 
@@ -25,7 +29,6 @@ class ListaComunidadesFragment : Fragment() {
     private lateinit var tvVazio: TextView
     private lateinit var fabAdicionar: FloatingActionButton
     private lateinit var adaptador: ComunidadeAdapter
-    private lateinit var bancoDados: DatabaseReference
     private lateinit var dao: ComunidadeDao
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -38,12 +41,11 @@ class ListaComunidadesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bancoDados = FirebaseDatabase.getInstance(BuildConfig.FIREBASE_DATABASE_URL).reference
         dao = BancoLocal.obterInstancia(requireContext()).comunidadeDao()
 
         configurarLista()
         carregarLocal()
-        sincronizarComFirebase()
+        carregarViaApi()
 
         fabAdicionar.setOnClickListener {
             startActivity(Intent(requireContext(), TelaComunidadeActivity::class.java))
@@ -53,7 +55,7 @@ class ListaComunidadesFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         carregarLocal()
-        sincronizarComFirebase()
+        carregarViaApi()
     }
 
     private fun configurarLista() {
@@ -75,19 +77,24 @@ class ListaComunidadesFragment : Fragment() {
         }.start()
     }
 
-    private fun sincronizarComFirebase() {
-        bancoDados.child("comunidades")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val lista = snapshot.children.mapNotNull { it.getValue(Comunidade::class.java) }
-                    Thread {
+    private fun carregarViaApi() {
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.instancia.listarComunidades()
+                }
+                if (response.isSuccessful) {
+                    val lista = response.body()?.values?.toList() ?: emptyList()
+                    withContext(Dispatchers.IO) {
                         dao.limparTodas()
                         dao.salvarTodas(lista)
-                        activity?.runOnUiThread { atualizarUI(lista) }
-                    }.start()
+                    }
+                    atualizarUI(lista)
                 }
-                override fun onCancelled(error: DatabaseError) {}
-            })
+            } catch (e: Exception) {
+                Log.e("ListaComunidades", "Erro ao carregar via API REST", e)
+            }
+        }
     }
 
     private fun atualizarUI(lista: List<Comunidade>) {

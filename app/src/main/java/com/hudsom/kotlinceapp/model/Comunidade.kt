@@ -9,5 +9,9 @@ data class Comunidade(
     val nome: String = "",
     val lider: String = "",
     val descricao: String = "",
-    val ownerId: String = ""
+    val ownerId: String = "",
+    val latitude: Double = 0.0,
+    val longitude: Double = 0.0,
+    val endereco: String = "",
+    val imagem: String = ""
 )

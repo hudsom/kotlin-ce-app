@@ -2,6 +2,9 @@ package com.hudsom.kotlinceapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.graphics.BitmapFactory
+import android.util.Base64
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -60,15 +63,23 @@ class TelaInicialActivity : AppCompatActivity() {
         val headerView = binding.navigationView.getHeaderView(0)
         val tvNome = headerView.findViewById<TextView>(R.id.tvNomeDrawer)
         val tvEmail = headerView.findViewById<TextView>(R.id.tvEmailDrawer)
+        val ivFoto = headerView.findViewById<ImageView>(R.id.ivFotoDrawer)
 
         val usuario = autenticacao.currentUser
         tvEmail.text = usuario?.email ?: ""
 
         usuario?.uid?.let { uid ->
-            bancoDados.child("usuarios").child(uid).child("nome")
+            bancoDados.child("usuarios").child(uid)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        tvNome.text = snapshot.getValue(String::class.java) ?: ""
+                        tvNome.text = snapshot.child("nome").getValue(String::class.java) ?: ""
+                        val fotoCapa = snapshot.child("fotoCapa").getValue(String::class.java)
+                        if (!fotoCapa.isNullOrEmpty()) {
+                            val bytes = Base64.decode(fotoCapa, Base64.NO_WRAP)
+                            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                            ivFoto.setImageBitmap(bitmap)
+                            ivFoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                        }
                     }
                     override fun onCancelled(error: DatabaseError) {}
                 })

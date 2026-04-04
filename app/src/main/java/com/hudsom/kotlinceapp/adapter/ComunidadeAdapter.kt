@@ -1,6 +1,9 @@
 package com.hudsom.kotlinceapp.adapter
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hudsom.kotlinceapp.databinding.ItemComunidadeBinding
@@ -24,6 +27,27 @@ class ComunidadeAdapter(
         holder.binding.tvLiderComunidade.text = comunidade.lider
         holder.binding.tvDescricaoComunidade.text = comunidade.descricao
         holder.binding.cardComunidade.setOnClickListener { aoClicar(comunidade) }
+
+        if (comunidade.imagem.isNotEmpty()) {
+            val bytes = Base64.decode(comunidade.imagem, Base64.NO_WRAP)
+            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            holder.binding.ivImagemComunidade.setImageBitmap(bitmap)
+            holder.binding.ivImagemComunidade.visibility = View.VISIBLE
+        } else {
+            holder.binding.ivImagemComunidade.visibility = View.GONE
+        }
+
+        if (comunidade.latitude != 0.0 || comunidade.longitude != 0.0) {
+            val texto = if (comunidade.endereco.isNotEmpty()) {
+                comunidade.endereco
+            } else {
+                String.format("%.4f, %.4f", comunidade.latitude, comunidade.longitude)
+            }
+            holder.binding.tvLocalizacaoComunidade.text = "📍 $texto"
+            holder.binding.tvLocalizacaoComunidade.visibility = View.VISIBLE
+        } else {
+            holder.binding.tvLocalizacaoComunidade.visibility = View.GONE
+        }
     }
 
     override fun getItemCount() = itens.size

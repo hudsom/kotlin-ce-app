@@ -8,12 +8,22 @@
     android:padding="24dp"
     android:paddingTop="48dp">
 
-    <ImageView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginBottom="12dp"
-        android:contentDescription="@string/nome_app"
-        android:src="@mipmap/ic_launcher_round" />
+        app:cardCornerRadius="32dp"
+        app:cardElevation="2dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <ImageView
+            android:id="@+id/ivFotoDrawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/nome_app"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher_round" />
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/tvNomeDrawer"

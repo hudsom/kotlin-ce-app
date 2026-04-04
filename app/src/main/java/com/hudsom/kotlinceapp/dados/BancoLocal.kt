@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.hudsom.kotlinceapp.model.Comunidade
 
-@Database(entities = [Comunidade::class], version = 2)
+@Database(entities = [Comunidade::class], version = 5)
 abstract class BancoLocal : RoomDatabase() {
     abstract fun comunidadeDao(): ComunidadeDao
 
