@@ -75,4 +75,15 @@
     <string name="sucesso_cadastro">Conta criada com sucesso!</string>
     <string name="sucesso_comunidade_salva">Comunidade salva!</string>
     <string name="sucesso_comunidade_excluida">Comunidade excluída!</string>
+    <string name="sucesso_email_enviado">E-mail de redefinição enviado!</string>
+
+    <!-- Esqueci minha senha -->
+    <string name="login_esqueci_senha">Esqueci minha senha</string>
+    <string name="esqueci_senha_titulo">Redefinir senha</string>
+    <string name="esqueci_senha_mensagem">Informe seu e-mail para receber o link de redefinição.</string>
+    <string name="esqueci_senha_enviar">Enviar</string>
+
+    <!-- Notificação local -->
+    <string name="notificacao_titulo">Kotlin CE App</string>
+    <string name="notificacao_mensagem">Confira as novidades das suas comunidades!</string>
 </resources>

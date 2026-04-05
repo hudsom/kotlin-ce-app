@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 import com.hudsom.kotlinceapp.databinding.TelaCadastroBinding
 import com.hudsom.kotlinceapp.fragment.BotaoFragment
@@ -42,6 +43,7 @@ class TelaCadastroActivity : AppCompatActivity() {
 
     private lateinit var binding: TelaCadastroBinding
     private lateinit var autenticacao: FirebaseAuth
+    private lateinit var analytics: FirebaseAnalytics
 
     private lateinit var fragmentEmail: InputEmailFragment
     private lateinit var fragmentSenha: InputSenhaFragment
@@ -78,6 +80,7 @@ class TelaCadastroActivity : AppCompatActivity() {
         }
 
         autenticacao = FirebaseAuth.getInstance()
+        analytics = FirebaseAnalytics.getInstance(this)
 
         fragmentEmail = supportFragmentManager.findFragmentById(R.id.fragmentEmail) as InputEmailFragment
         fragmentSenha = supportFragmentManager.findFragmentById(R.id.fragmentSenha) as InputSenhaFragment
@@ -193,6 +196,7 @@ class TelaCadastroActivity : AppCompatActivity() {
                 FirebaseDatabase.getInstance(BuildConfig.FIREBASE_DATABASE_URL).reference
                     .child("usuarios").child(uid).setValue(perfil)
 
+                analytics.logEvent("cadastro_email", null)
                 autenticacao.signOut()
                 Toast.makeText(this, getString(R.string.sucesso_cadastro), Toast.LENGTH_LONG).show()
                 startActivity(Intent(this, TelaLoginActivity::class.java))

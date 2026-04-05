@@ -15,10 +15,14 @@ import androidx.credentials.GetCredentialRequest
 import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 import com.hudsom.kotlinceapp.databinding.TelaLoginBinding
 import com.hudsom.kotlinceapp.fragment.BotaoFragment
@@ -31,6 +35,7 @@ class TelaLoginActivity : AppCompatActivity() {
 
     private lateinit var binding: TelaLoginBinding
     private lateinit var autenticacao: FirebaseAuth
+    private lateinit var analytics: FirebaseAnalytics
     private val prefs by lazy { getSharedPreferences("login_prefs", MODE_PRIVATE) }
 
     private lateinit var fragmentEmail: InputEmailFragment
@@ -49,6 +54,7 @@ class TelaLoginActivity : AppCompatActivity() {
         }
 
         autenticacao = FirebaseAuth.getInstance()
+        analytics = FirebaseAnalytics.getInstance(this)
 
         fragmentEmail = supportFragmentManager.findFragmentById(R.id.fragmentEmail) as InputEmailFragment
         fragmentSenha = supportFragmentManager.findFragmentById(R.id.fragmentSenha) as InputSenhaFragment
@@ -60,6 +66,7 @@ class TelaLoginActivity : AppCompatActivity() {
         carregarCredenciais()
 
         binding.btnGoogle.setOnClickListener { loginComGoogle() }
+        binding.btnEsqueciSenha.setOnClickListener { mostrarDialogoEsqueciSenha() }
         binding.btnIrCadastro.setOnClickListener {
             startActivity(Intent(this, TelaCadastroActivity::class.java))
         }
@@ -121,6 +128,7 @@ class TelaLoginActivity : AppCompatActivity() {
 
         autenticacao.signInWithEmailAndPassword(email, senha)
             .addOnSuccessListener {
+                analytics.logEvent("login_email", null)
                 if (binding.cbLembrar.isChecked) {
                     salvarCredenciais(email, senha)
                 } else {
@@ -177,11 +185,42 @@ class TelaLoginActivity : AppCompatActivity() {
                 val perfil = PerfilUsuario(uid = user.uid, nome = user.displayName ?: "", email = user.email ?: "")
                 FirebaseDatabase.getInstance(BuildConfig.FIREBASE_DATABASE_URL).reference
                     .child("usuarios").child(user.uid).setValue(perfil)
+                analytics.logEvent("login_google", null)
                 irParaInicial()
             }
             .addOnFailureListener {
                 Toast.makeText(this, getString(R.string.erro_conexao), Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun mostrarDialogoEsqueciSenha() {
+        val layout = layoutInflater.inflate(R.layout.fragment_input_email, null)
+        val tilEmail = layout.findViewById<TextInputLayout>(R.id.tilEmail)
+        val etEmail = layout.findViewById<TextInputEditText>(R.id.etEmail)
+
+        val emailAtual = fragmentEmail.obterTexto()
+        if (emailAtual.isNotEmpty()) etEmail.setText(emailAtual)
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.esqueci_senha_titulo))
+            .setMessage(getString(R.string.esqueci_senha_mensagem))
+            .setView(layout)
+            .setNegativeButton(getString(R.string.dialogo_cancelar), null)
+            .setPositiveButton(getString(R.string.esqueci_senha_enviar)) { _, _ ->
+                val email = etEmail.text.toString().trim()
+                if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    Toast.makeText(this, getString(R.string.erro_email_invalido), Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                autenticacao.sendPasswordResetEmail(email)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, getString(R.string.sucesso_email_enviado), Toast.LENGTH_LONG).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, getString(R.string.erro_conexao), Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .show()
     }
 
     private fun irParaInicial() {

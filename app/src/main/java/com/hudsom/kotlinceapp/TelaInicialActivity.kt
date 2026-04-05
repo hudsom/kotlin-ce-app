@@ -1,6 +1,9 @@
 package com.hudsom.kotlinceapp
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.graphics.BitmapFactory
 import android.util.Base64
@@ -8,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -17,6 +21,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.hudsom.kotlinceapp.databinding.TelaInicialBinding
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.ExistingPeriodicWorkPolicy
+import java.util.concurrent.TimeUnit
 
 class TelaInicialActivity : AppCompatActivity() {
 
@@ -39,6 +47,8 @@ class TelaInicialActivity : AppCompatActivity() {
         bancoDados = FirebaseDatabase.getInstance(BuildConfig.FIREBASE_DATABASE_URL).reference
 
         configurarDrawer()
+        pedirPermissaoNotificacao()
+        agendarNotificacaoLocal()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -50,6 +60,26 @@ class TelaInicialActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private val pedirPermissao = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { _ -> }
+
+    private fun pedirPermissaoNotificacao() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            pedirPermissao.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    private fun agendarNotificacaoLocal() {
+        val request = PeriodicWorkRequestBuilder<ServicoNotificacaoLocal>(15, TimeUnit.MINUTES).build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "notificacao_local",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
     }
 
     private fun configurarDrawer() {

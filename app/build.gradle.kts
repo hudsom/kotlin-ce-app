@@ -59,6 +59,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.analytics)
     implementation(libs.credential.manager)
     implementation(libs.credential.manager.play)
     implementation(libs.google.id.identity)
@@ -67,6 +69,9 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    // WorkManager
+    implementation(libs.work.runtime)
 
     // Retrofit (API REST)
     implementation(libs.retrofit)

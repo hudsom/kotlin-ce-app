@@ -21,8 +21,11 @@ import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.*
 import com.hudsom.kotlinceapp.dados.BancoLocal
 import com.hudsom.kotlinceapp.databinding.TelaComunidadeBinding
@@ -42,6 +45,7 @@ class TelaComunidadeActivity : AppCompatActivity() {
     private var endereco: String = ""
     private var fotoUri: Uri? = null
     private var cameraUri: Uri? = null
+    private lateinit var analytics: FirebaseAnalytics
 
     private val pedirPermissaoLocalizacao = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -82,6 +86,7 @@ class TelaComunidadeActivity : AppCompatActivity() {
         bancoDados = FirebaseDatabase.getInstance(BuildConfig.FIREBASE_DATABASE_URL).reference.child("comunidades")
         dao = BancoLocal.obterInstancia(this).comunidadeDao()
         comunidadeId = intent.getStringExtra("comunidade_id")
+        analytics = FirebaseAnalytics.getInstance(this)
 
         binding.barraFerramentas.setNavigationOnClickListener { finish() }
 
@@ -144,7 +149,8 @@ class TelaComunidadeActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) return
 
         val fusedClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedClient.lastLocation
+        val cancelToken = CancellationTokenSource()
+        fusedClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cancelToken.token)
             .addOnSuccessListener { location ->
                 if (location != null) {
                     latitude = location.latitude
@@ -237,6 +243,7 @@ class TelaComunidadeActivity : AppCompatActivity() {
 
         bancoDados.child(id).setValue(comunidade)
             .addOnSuccessListener {
+                analytics.logEvent(if (comunidadeId != null) "comunidade_editada" else "comunidade_criada", null)
                 Toast.makeText(this, getString(R.string.sucesso_comunidade_salva), Toast.LENGTH_SHORT).show()
                 finish()
             }

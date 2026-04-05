@@ -56,10 +56,19 @@
             android:id="@+id/cbLembrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:text="@string/login_lembrar"
             android:textColor="@color/sobre_fundo"
             android:buttonTint="@color/primaria" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEsqueciSenha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="16dp"
+            android:text="@string/login_esqueci_senha"
+            android:textColor="@color/texto_link"
+            style="@style/Widget.Material3.Button.TextButton" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentBtnEntrar"
