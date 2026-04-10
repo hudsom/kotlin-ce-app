@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics.plugin)
+    alias(libs.plugins.firebase.appdistribution.plugin)
     alias(libs.plugins.ksp)
 }
 
@@ -61,6 +63,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     implementation(libs.credential.manager)
     implementation(libs.credential.manager.play)
     implementation(libs.google.id.identity)
@@ -79,6 +82,9 @@ dependencies {
 
     // Localização
     implementation(libs.play.services.location)
+
+    // AdMob
+    implementation(libs.play.services.ads)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

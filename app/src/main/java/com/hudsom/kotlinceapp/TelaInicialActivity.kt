@@ -18,6 +18,8 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.hudsom.kotlinceapp.databinding.TelaInicialBinding
@@ -49,6 +51,7 @@ class TelaInicialActivity : AppCompatActivity() {
         configurarDrawer()
         pedirPermissaoNotificacao()
         agendarNotificacaoLocal()
+        inicializarAdMob()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -80,6 +83,11 @@ class TelaInicialActivity : AppCompatActivity() {
             ExistingPeriodicWorkPolicy.KEEP,
             request
         )
+    }
+
+    private fun inicializarAdMob() {
+        MobileAds.initialize(this) {}
+        binding.adView.loadAd(AdRequest.Builder().build())
     }
 
     private fun configurarDrawer() {
